@@ -4,10 +4,12 @@ from django.db import models
 # Create your models here.
 
 class Book(models.Model):
+
     title = models.CharField(max_length=200)
     description = models.TextField()
     year = models.DateTimeField()
     book_file = models.FileField(blank=True)
+    price = models.PositiveIntegerField(default=0)
     author = models.ForeignKey('Author',on_delete=models.SET_NULL,null=True,related_name='books')
 
     def __str__(self):
@@ -33,7 +35,7 @@ class Order(models.Model):
     address = models.CharField(max_length=100)
     quantity = models.PositiveIntegerField()
     status = models.CharField(choices=statuses,max_length=20,default='pending')
-
+    total_sum = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         try:

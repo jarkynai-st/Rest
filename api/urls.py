@@ -16,5 +16,6 @@ urlpatterns = [
     path('my_orders/',MyOrdersAPIView.as_view()),
     path('branchs/',BranchAPIView.as_view()),
     path('contacts/',ContactView.as_view()),
+    path('order/<int:order_id>/',ModifyOrder.as_view()),
 
 ]

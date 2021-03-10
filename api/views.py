@@ -61,6 +61,22 @@ class OrderAPIView(views.APIView):
             serializer.save()
             return Response(serializer.data)
 
+class ModifyOrder(views.APIView):
+
+    def put(self,request,*args,**kwargs):
+        order = Order.objects.get(id=kwargs['order_id'])
+        serializer = OrderSerializer(order,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"data":"OK!!"})
+        return Response(serializer.errors)
+
+
+    def delete(self,request,order_id):
+        order = Order.objects.get(id=order_id)
+        order.delete()
+        return Response({'date':'successfully deleted!'})
+
 class MyOrdersAPIView(views.APIView):
 
     def get(self,request,*args,**kwargs):
