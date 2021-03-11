@@ -8,6 +8,7 @@ class Book(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     year = models.DateTimeField()
+    abbr = models.CharField(max_length=20,unique=True)
     book_file = models.FileField(blank=True)
     price = models.PositiveIntegerField(default=0)
     author = models.ForeignKey('Author',on_delete=models.SET_NULL,null=True,related_name='books')
@@ -22,6 +23,9 @@ class Author(models.Model):
     date_birth = models.DateField()
     date_death = models.DateField(blank=True)
     country = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
 
 
 class Order(models.Model):

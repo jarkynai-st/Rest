@@ -4,12 +4,12 @@ from .views import *
 
 router = routers.DefaultRouter()
 router.register('order_set',OrderModelViewSet)
+router.register('books',BookView)
 
 
 urlpatterns = [
 
     path('user/',UserView.as_view()),
-    path('books/',BookView.as_view()),
     path('authors/',AuthorView.as_view()),
     path('order/',OrderAPIView.as_view()),
     path('',include(router.urls)),
@@ -17,5 +17,6 @@ urlpatterns = [
     path('branchs/',BranchAPIView.as_view()),
     path('contacts/',ContactView.as_view()),
     path('order/<int:order_id>/',ModifyOrder.as_view()),
+    path('book/<str:abbr>/',BookDemoView.as_view()),
 
 ]

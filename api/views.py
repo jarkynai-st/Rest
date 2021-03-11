@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.viewsets import ModelViewSet
 
 from .serializer import *
@@ -14,18 +14,12 @@ class UserView(views.APIView):
         serializer = UserSerializer(users,many=True)
         return Response(serializer.data)
 
-class BookView(views.APIView):
 
-    def get(self,request,*args,**kwargs):
-        books = Book.objects.all()
-        serializer = BookSerializer(books,many=True)
-        return Response(serializer.data)
+class BookView(viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
 
-    def post(self,request,*args,**kwargs):
-        serializer = BookSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'data':'OK'})
+
 
 
 class AuthorView(views.APIView):
@@ -88,6 +82,17 @@ class MyOrdersAPIView(views.APIView):
 class OrderModelViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+
+class BookDemoView(views.APIView):
+
+    def get(self,request,*args,**kwargs):
+        try:
+            book = Book.objects.get(abbr=kwargs['abbr'])
+        except Book.DoesNotExist:
+            return Response({"data":"Book not found!"},status=status.HTTP_404_NOT_FOUND)
+        demo = book.book_file.open()
+        return Response({"demo":demo.read()[:5]})
 
 
 class BranchAPIView(views.APIView):
