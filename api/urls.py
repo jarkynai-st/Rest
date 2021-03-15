@@ -17,6 +17,6 @@ urlpatterns = [
     path('branchs/',BranchAPIView.as_view()),
     path('contacts/',ContactView.as_view()),
     path('order/<int:order_id>/',ModifyOrder.as_view()),
-    path('book/<str:abbr>/',BookDemoView.as_view()),
+    path('book_demo/<str:abbr>/',BookDemoView.as_view()),
 
 ]

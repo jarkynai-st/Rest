@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializer import BookDetailSerializer,CommentSetSerializer
+from .serializer import BookDetailSerializer,CommentSetSerializer,CommentCreateSerializer
 from api.models import Book
 from .models import Comment
 # Create your views here.
@@ -19,8 +19,10 @@ class BookDetailView(APIView):
 
 
      def post(self,request,*args,**kwargs):
-         serializer = CommentSetSerializer(data=request.data)
+         serializer = CommentCreateSerializer(data=request.data)
          if serializer.is_valid():
-             serializer.save()
+             book = Book.objects.get(id=kwargs['book_id'])
+             text = serializer.data.get('text')
+             Comment.objects.create(book=book,text=text,user=request.user)
              return Response({"data":"comment create succesfully!"})
          return Response(serializer.errors)
