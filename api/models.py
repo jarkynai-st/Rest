@@ -12,6 +12,9 @@ class Book(models.Model):
     book_file = models.FileField(blank=True)
     price = models.PositiveIntegerField(default=0)
     author = models.ForeignKey('Author',on_delete=models.SET_NULL,null=True,related_name='books')
+    sale = models.BooleanField(default=False)
+    sale_amount = models.PositiveIntegerField(default=0)
+    address = models.CharField(max_length=50)
 
     def __str__(self):
         return self.title
@@ -33,13 +36,18 @@ class Order(models.Model):
         ('pending','pending'),
         ('finished','finished'),
     )
-    user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
+    user = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,)
     book = models.ForeignKey(Book,on_delete=models.SET_NULL,null=True)
-    date_created = models.DateField(auto_now_add=True)
-    address = models.CharField(max_length=100)
+    date_created = models.DateTimeField(auto_now_add=True)
+    address = models.CharField(max_length=100,null=True)
     quantity = models.PositiveIntegerField()
     status = models.CharField(choices=statuses,max_length=20,default='pending')
     total_sum = models.PositiveIntegerField(default=0)
+    payment_type = models.CharField(choices=(
+        ('card','card'),
+        ('cash','cash'),
+    ),max_length=40,default='cash')
+
 
     def __str__(self):
         try:

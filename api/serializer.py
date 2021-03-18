@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
@@ -34,20 +36,29 @@ class AuthorSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     # book = serializers.StringRelatedField()
     status = serializers.CharField(read_only=True)
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    # user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     total_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
-        fields = ['id','user','book','address','date_created','status','quantity','total_price']
+        fields = ['id','user','book','address','date_created','status','quantity','total_price','payment_type']
 
 
     def get_total_price(self,obj):
         total_price = 0
         try:
             total_price += obj.quantity * obj.book.price
+            if obj.address is None:
+                obj.address = obj.user.profile.address
             obj.total_sum = total_price
-            obj.save()
+            if obj.payment_type == 'card':
+                if obj.user.profile.wallet >= total_price:
+                    obj.user.profile.wallet -= total_price
+                    obj.save()
+                    obj.user.profile.save()
+                else:
+                    obj.delete()
+                    raise ValidationError("Not enough money!")
             return total_price
         except AttributeError:
             return 0
