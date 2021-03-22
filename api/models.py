@@ -47,7 +47,7 @@ class Order(models.Model):
         ('card','card'),
         ('cash','cash'),
     ),max_length=40,default='cash')
-
+    promocode = models.CharField(max_length=5,null=True,blank=True)
 
     def __str__(self):
         try:
