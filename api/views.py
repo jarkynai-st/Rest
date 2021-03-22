@@ -7,7 +7,9 @@ from rest_framework.viewsets import ModelViewSet
 from django.utils import timezone
 from .serializer import *
 from rest_framework import views
-# Create your views here.
+from rest_framework import filters
+from rest_framework import permissions
+
 
 class UserView(views.APIView):
 
@@ -18,9 +20,12 @@ class UserView(views.APIView):
 
 
 class BookView(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filter_backends = [filters.SearchFilter,filters.OrderingFilter]
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-
+    search_fields = ['title']
+    ordering_fields = ['price','title']
 
 
 
